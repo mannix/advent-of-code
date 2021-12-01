@@ -14,11 +14,8 @@ func main() {
 		panic(err)
 	}
 
-	// Cast to string
-	strInput := string(input)
-
 	// Slice by whitespace
-	sMeasurements := strings.Fields(strInput)
+	sMeasurements := strings.Fields(string(input))
 
 	// Map the strings to ints
 	var measurements []int
@@ -30,16 +27,30 @@ func main() {
 		measurements = append(measurements, value)
 	}
 
-	// Count increases
-	increases := 0
+	// Individual increases
+	individualIncreases := 0
 	for i, reading := range measurements {
 		// First reading is skipped
 		if i > 0 {
 			if reading > measurements[i-1] {
-				increases++
+				individualIncreases++
 			}
 		}
 	}
 
-	fmt.Printf("Number of increases: %v", increases) // 1400
+	// Group increases
+	groupIncreases := 0
+	for i := 0; i < len(measurements); i++ {
+		// Skip until we have two groups to compare (4 numbers)
+		if i > 2 {
+			currentGroup := measurements[i] + measurements[i-1] + measurements[i-2]
+			previousGroup := measurements[i-1] + measurements[i-2] + measurements[i-3]
+			if currentGroup > previousGroup {
+				groupIncreases++
+			}
+		}
+	}
+
+	fmt.Printf("Number of individual increases: %v\n", individualIncreases) // 1400
+	fmt.Printf("Number of group increases: %v", groupIncreases)             // 1429
 }
